@@ -78,6 +78,7 @@ def main(args):
     if args.freeze_layers:
         for name, para in model.named_parameters():
             if "head" not in name:
+                # TODO: maybe wrong
                 para.requires_grad_(True)
             else:
                 print("training {}".format(name))
@@ -122,12 +123,12 @@ if __name__ == '__main__':
     parser.add_argument('--lrf', type=float, default=0.001)   # final learning rate
 
     parser.add_argument('--data-path', type=str,
-                        default="D:\\Code\\data\\input")
+                        default="/home/zhaoxin/data/das/pipeline/input")
 
-    parser.add_argument('--weights', type=str, default='./pre-training/pre_efficientnetv2-s.pth',
+    parser.add_argument('--weights', type=str, default='./AAAI-7856-code/model/pre-training/pre_efficientnetv2-s.pth',
                         help='initial weights path')
     parser.add_argument('--freeze-layers', type=bool, default=True)
-    parser.add_argument('--device', default='cuda:0', help='device id (i.e. 0 or 0,1 or cpu)')
+    parser.add_argument('--device', default='cuda:1', help='device id (i.e. 0 or 0,1 or cpu)')
 
     opt = parser.parse_args()
 

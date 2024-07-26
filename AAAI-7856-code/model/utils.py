@@ -12,11 +12,17 @@ import matplotlib.pyplot as plt
 
 def read_split_data(root: str, val_rate: float = 0.2):
     random.seed(0)
-    assert os.path.exists(root), "dataset root: {} does not exist.".format(root)
-    flower_class = [cla for cla in os.listdir(root) if os.path.isdir(os.path.join(root, cla))]
+    assert os.path.exists(root), "dataset root: {} does not exist.".format(
+        root)
+    flower_class = [
+        cla for cla in os.listdir(root)
+        if os.path.isdir(os.path.join(root, cla))
+    ]
     flower_class.sort()
     class_indices = dict((k, v) for v, k in enumerate(flower_class))
-    json_str = json.dumps(dict((val, key) for key, val in class_indices.items()), indent=4)
+    json_str = json.dumps(dict(
+        (val, key) for key, val in class_indices.items()),
+                          indent=4)
     with open('class_indices.json', 'w') as json_file:
         json_file.write(json_str)
 
@@ -28,8 +34,10 @@ def read_split_data(root: str, val_rate: float = 0.2):
     supported = [".jpg", ".JPG", ".png", ".PNG"]
     for cla in flower_class:
         cla_path = os.path.join(root, cla)
-        images = [os.path.join(root, cla, i) for i in os.listdir(cla_path)
-                  if os.path.splitext(i)[-1] in supported]
+        images = [
+            os.path.join(root, cla, i) for i in os.listdir(cla_path)
+            if os.path.splitext(i)[-1] in supported
+        ]
         image_class = class_indices[cla]
         every_class_num.append(len(images))
         val_path = random.sample(images, k=int(len(images) * val_rate))
@@ -75,7 +83,7 @@ def plot_data_loader_image(data_loader):
             img = images[i].numpy().transpose(1, 2, 0)
             img = (img * [0.229, 0.224, 0.225] + [0.485, 0.456, 0.406]) * 255
             label = labels[i].item()
-            plt.subplot(1, plot_num, i+1)
+            plt.subplot(1, plot_num, i + 1)
             plt.xlabel(class_indices[str(label)])
             plt.xticks([])
             plt.yticks([])
@@ -115,9 +123,10 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch):
         loss.backward()
         accu_loss += loss.detach()
 
-        data_loader.desc = "[train epoch {}] loss: {:.3f}, acc: {:.3f}".format(epoch,
-                                                                               accu_loss.item() / (step + 1),
-                                                                               accu_num.item() / sample_num)
+        data_loader.desc = "[train epoch {}] loss: {:.3f}, acc: {:.3f}".format(
+            epoch,
+            accu_loss.item() / (step + 1),
+            accu_num.item() / sample_num)
 
         if not torch.isfinite(loss):
             print('WARNING: non-finite loss, ending training ', loss)
@@ -151,8 +160,9 @@ def evaluate(model, data_loader, device, epoch):
         loss = loss_function(pred, labels.to(device))
         accu_loss += loss
 
-        data_loader.desc = "[valid epoch {}] loss: {:.3f}, acc: {:.3f}".format(epoch,
-                                                                               accu_loss.item() / (step + 1),
-                                                                               accu_num.item() / sample_num)
+        data_loader.desc = "[valid epoch {}] loss: {:.3f}, acc: {:.3f}".format(
+            epoch,
+            accu_loss.item() / (step + 1),
+            accu_num.item() / sample_num)
 
     return accu_loss.item() / (step + 1), accu_num.item() / sample_num

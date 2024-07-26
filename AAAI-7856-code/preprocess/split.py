@@ -3,11 +3,14 @@ import os
 import pandas as pd
 
 # Root directory of data
-dir = 'D:\\Code\\data\\raw data'
+dir = '/home/zhaoxin/data/das/AAAI-7856-DATA/data/raw_data'
 files = os.listdir(dir)
+print(files)
 for file in files:
     file_path = dir + '/' + file + '/' + file + f'.csv'
     save_path = dir + '/' + file + '/'
+    print(file_path)
+    print(save_path)
     df = pd.read_csv(file_path, header=None).values
     # Open the original csv file
     with open(file_path, 'r', encoding='utf-8-sig') as f:
@@ -18,6 +21,7 @@ for file in files:
 
     # Calculate the number of segments
     num_segments = len(data) // segment_length
+    print(num_segments)
     # Loop through each segment and save as a new csv file
     for i in range(num_segments):
         start_index = i * segment_length
